@@ -24,6 +24,13 @@ jobs:
       - name: Build installer (silent)
         run: ISCC.exe "${{ github.workspace }}\installer\setup.iss"
 
+      - name: Zip release-sources folder
+        shell: pwsh
+        run: |
+          $source = "release-sources"
+          $zipFile = "FIFA10_Ukr.zip"
+          Compress-Archive -Path $source -DestinationPath $zipFile -Force
+
       - name: Upload installer
         uses: softprops/action-gh-release@v2
         with:
