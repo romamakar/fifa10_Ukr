@@ -1,0 +1,41 @@
+name: Build and Release Zip
+
+on:
+  push:
+    branches:
+      - "master"
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: "8.0.x"
+
+      - name: Install Inno Setup
+        run: choco install innosetup -y      
+
+      - name: Build installer (silent)
+        run: ISCC.exe "${{ github.workspace }}\installer\setup.iss"
+
+      - name: Upload installer
+        uses: softprops/action-gh-release@v2
+        with:
+          files: "D:\\a\\fifa10_Ukr\\fifa10_Ukr\\installer\\Output\\FIFA10_Ukr_Installer.exe"
+          tag_name: "exe"  # Можна використовувати будь-який тег, якщо потрібно
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Upload release asset
+        uses: softprops/action-gh-release@v2
+        with:
+          files: "FIFA10_Ukr.zip"
+          tag_name: "zip"  # Можна використовувати будь-який тег, якщо потрібно
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
